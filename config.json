@@ -1,0 +1,396 @@
+{
+  "1558473974231601343": {
+    "log_channel_id": null,
+    "banned_words": [],
+    "block_invites": false,
+    "antispam": {
+      "enabled": true,
+      "max_messages": 5,
+      "per_seconds": 5,
+      "timeout_minutes": 10
+    },
+    "antiraid": {
+      "enabled": true,
+      "join_threshold": 5,
+      "per_seconds": 10,
+      "lockdown_seconds": 120,
+      "min_account_age_days": 0
+    },
+    "welcome": {
+      "enabled": false,
+      "channel_id": null,
+      "embed": true,
+      "message": "أهلاً {user} في {server}! 🎉 أنت العضو رقم {count}"
+    },
+    "goodbye": {
+      "enabled": false,
+      "channel_id": null,
+      "message": "{username} غادر السيرفر 👋"
+    },
+    "autorole": {
+      "enabled": false,
+      "role_id": null
+    },
+    "autoreply": {
+      "enabled": false,
+      "rules": []
+    },
+    "tickets": {
+      "enabled": false,
+      "category_id": null,
+      "support_role_ids": [],
+      "log_channel_id": null,
+      "max_open": 1,
+      "counter": 0,
+      "welcome": "أهلاً {user}! اكتب مشكلتك بالتفصيل وبيرد عليك الفريق قريباً.",
+      "panel": {
+        "channel_id": null,
+        "title": "🎫 الدعم الفني",
+        "description": "اضغط على الزر لفتح تذكرة وبيرد عليك الفريق."
+      },
+      "types": [
+        {
+          "id": "t1",
+          "label": "دعم فني",
+          "emoji": "🛠️"
+        }
+      ]
+    },
+    "applications": {
+      "enabled": false,
+      "review_channel_id": null,
+      "forms": [],
+      "panel": {
+        "channel_id": null,
+        "title": "🧾 التقديمات",
+        "description": "اختر القسم اللي تبي تقدم عليه واضغط الزر."
+      }
+    },
+    "verify": {
+      "enabled": false,
+      "role_id": null,
+      "remove_role_id": null,
+      "panel": {
+        "channel_id": null,
+        "title": "✅ التحقق",
+        "description": "اضغط الزر بالأسفل عشان تتحقق وتظهر لك باقي الرومات."
+      }
+    },
+    "antinuke": {
+      "enabled": true,
+      "limit": 4,
+      "per_seconds": 10,
+      "action": "strip",
+      "protect_perms": true,
+      "block_new_bots": true,
+      "whitelist_ids": []
+    },
+    "automod": {
+      "mention_enabled": true,
+      "mention_max": 5,
+      "links_enabled": false,
+      "links_allow": [],
+      "emoji_enabled": false,
+      "emoji_max": 10,
+      "dup_enabled": true,
+      "dup_count": 3
+    },
+    "lockdown": {
+      "active": false,
+      "prev": {}
+    },
+    "logs": {
+      "enabled": true,
+      "channels": {
+        "messages": null,
+        "members": null,
+        "voice": null,
+        "server": null,
+        "mod": null
+      },
+      "events": {
+        "message_delete": true,
+        "message_edit": true,
+        "member_join": true,
+        "member_leave": true,
+        "member_update": true,
+        "voice": true,
+        "channel": true,
+        "role": true,
+        "invite": true,
+        "ban": true,
+        "kick": true,
+        "timeout": true,
+        "guild": true
+      }
+    }
+  },
+  "1563727165001039942": {
+    "log_channel_id": null,
+    "banned_words": [],
+    "block_invites": false,
+    "antispam": {
+      "enabled": true,
+      "max_messages": 5,
+      "per_seconds": 5,
+      "timeout_minutes": 10
+    },
+    "antiraid": {
+      "enabled": true,
+      "join_threshold": 5,
+      "per_seconds": 10,
+      "lockdown_seconds": 120,
+      "min_account_age_days": 0
+    },
+    "welcome": {
+      "enabled": false,
+      "channel_id": null,
+      "embed": true,
+      "message": "أهلاً {user} في {server}! 🎉 أنت العضو رقم {count}"
+    },
+    "goodbye": {
+      "enabled": false,
+      "channel_id": null,
+      "message": "{username} غادر السيرفر 👋"
+    },
+    "autorole": {
+      "enabled": false,
+      "role_id": null
+    },
+    "autoreply": {
+      "enabled": false,
+      "rules": []
+    },
+    "tickets": {
+      "enabled": true,
+      "category_id": 1563727165584056342,
+      "support_role_ids": [
+        1563728097495228577,
+        1563728099168886834
+      ],
+      "log_channel_id": 1563727165584056344,
+      "max_open": 1,
+      "counter": 1,
+      "welcome": "أهلاً {user}! اكتب مشكلتك بالتفصيل وبيرد عليك الفريق قريباً.",
+      "panel": {
+        "channel_id": 1563727165584056344,
+        "title": "🎫 الدعم الفني",
+        "description": "اضغط على الزر لفتح تذكرة وبيرد عليك الفريق."
+      },
+      "types": [
+        {
+          "id": "t1",
+          "label": "دعم فني",
+          "emoji": "🛠️"
+        }
+      ]
+    },
+    "applications": {
+      "enabled": false,
+      "review_channel_id": null,
+      "forms": [],
+      "panel": {
+        "channel_id": null,
+        "title": "🧾 التقديمات",
+        "description": "اختر القسم اللي تبي تقدم عليه واضغط الزر."
+      }
+    },
+    "verify": {
+      "enabled": true,
+      "role_id": 1563944279431450775,
+      "remove_role_id": null,
+      "panel": {
+        "channel_id": 1563727165584056344,
+        "title": "✅ التحقق",
+        "description": "اضغط الزر بالأسفل عشان تتحقق وتظهر لك باقي الرومات."
+      }
+    },
+    "antinuke": {
+      "enabled": true,
+      "limit": 4,
+      "per_seconds": 10,
+      "action": "strip",
+      "protect_perms": false,
+      "block_new_bots": false,
+      "whitelist_ids": []
+    },
+    "automod": {
+      "mention_enabled": true,
+      "mention_max": 5,
+      "links_enabled": false,
+      "links_allow": [],
+      "emoji_enabled": false,
+      "emoji_max": 10,
+      "dup_enabled": true,
+      "dup_count": 3
+    },
+    "lockdown": {
+      "active": false,
+      "prev": {}
+    },
+    "logs": {
+      "enabled": true,
+      "channels": {
+        "messages": 1563945053930520647,
+        "members": 1563945055574691931,
+        "voice": 1563945057009148057,
+        "server": 1563945060347805817,
+        "mod": 1563945062449020938
+      },
+      "events": {
+        "message_delete": true,
+        "message_edit": true,
+        "member_join": true,
+        "member_leave": true,
+        "member_update": true,
+        "voice": true,
+        "channel": true,
+        "role": true,
+        "invite": true,
+        "ban": true,
+        "kick": true,
+        "timeout": true,
+        "guild": true
+      }
+    }
+  },
+  "1563969641653604362": {
+    "log_channel_id": 1563970211621769350,
+    "banned_words": [],
+    "block_invites": true,
+    "antispam": {
+      "enabled": true,
+      "max_messages": 5,
+      "per_seconds": 5,
+      "timeout_minutes": 10
+    },
+    "antiraid": {
+      "enabled": true,
+      "join_threshold": 5,
+      "per_seconds": 10,
+      "lockdown_seconds": 120,
+      "min_account_age_days": 0
+    },
+    "welcome": {
+      "enabled": false,
+      "channel_id": null,
+      "embed": true,
+      "message": "أهلاً {user} في {server}! 🎉 أنت العضو رقم {count}"
+    },
+    "goodbye": {
+      "enabled": false,
+      "channel_id": null,
+      "message": "{username} غادر السيرفر 👋"
+    },
+    "autorole": {
+      "enabled": false,
+      "role_id": null
+    },
+    "autoreply": {
+      "enabled": false,
+      "rules": []
+    },
+    "tickets": {
+      "enabled": true,
+      "category_id": 1563970196023017572,
+      "support_role_ids": [
+        1563970155040477265
+      ],
+      "log_channel_id": 1563970211621769350,
+      "max_open": 1,
+      "counter": 0,
+      "welcome": "أهلاً {user}! اكتب مشكلتك بالتفصيل وبيرد عليك الفريق قريباً.",
+      "panel": {
+        "channel_id": 1563970197323251927,
+        "title": "🎫 الدعم الفني",
+        "description": "اضغط على الزر لفتح تذكرة وبيرد عليك الفريق."
+      },
+      "types": [
+        {
+          "id": "t1",
+          "label": "دعم فني",
+          "emoji": "🛠️"
+        }
+      ]
+    },
+    "applications": {
+      "enabled": true,
+      "review_channel_id": 1563970205242097768,
+      "forms": [
+        {
+          "id": "f2dn8",
+          "name": "تست",
+          "questions": [
+            "اسمك",
+            "عمرك"
+          ],
+          "role_id": "1563970156684771379",
+          "open": true
+        }
+      ],
+      "panel": {
+        "channel_id": 1563970183301828709,
+        "title": "🧾 التقديمات",
+        "description": "اختر القسم اللي تبي تقدم عليه واضغط الزر."
+      }
+    },
+    "verify": {
+      "enabled": true,
+      "role_id": 1563970158350041239,
+      "remove_role_id": null,
+      "panel": {
+        "channel_id": 1563970167338303619,
+        "title": "✅ التحقق",
+        "description": "اضغط الزر بالأسفل عشان تتحقق وتظهر لك باقي الرومات."
+      }
+    },
+    "antinuke": {
+      "enabled": true,
+      "limit": 4,
+      "per_seconds": 10,
+      "action": "strip",
+      "protect_perms": true,
+      "block_new_bots": true,
+      "whitelist_ids": []
+    },
+    "automod": {
+      "mention_enabled": true,
+      "mention_max": 5,
+      "links_enabled": true,
+      "links_allow": [],
+      "emoji_enabled": true,
+      "emoji_max": 10,
+      "dup_enabled": true,
+      "dup_count": 3
+    },
+    "lockdown": {
+      "active": false,
+      "prev": {}
+    },
+    "logs": {
+      "enabled": true,
+      "channels": {
+        "messages": 1563970197323251927,
+        "members": 1563970199559086201,
+        "voice": 1563970201110843484,
+        "server": 1563970202780172500,
+        "mod": 1563970205242097768
+      },
+      "events": {
+        "message_delete": true,
+        "message_edit": true,
+        "member_join": true,
+        "member_leave": true,
+        "member_update": true,
+        "voice": true,
+        "channel": true,
+        "role": true,
+        "invite": true,
+        "ban": true,
+        "kick": true,
+        "timeout": true,
+        "guild": true
+      }
+    }
+  }
+}
