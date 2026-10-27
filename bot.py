@@ -3,12 +3,14 @@ Discord Shield - بوت حماية وإدارة للسيرفر
 حماية (فلتر كلمات، سبام، غارات) + ترحيب + رد تلقائي + أدوار تلقائية + سجل + لوحة تحكم
 """
 import asyncio
+import ctypes
 import json
 import logging
 import os
 import re
 import time
 from collections import defaultdict, deque
+from logging.handlers import RotatingFileHandler
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from time import monotonic
@@ -17,8 +19,26 @@ import discord
 from discord import app_commands
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
+from flask import Flask
+from threading import Thread
+import os
 
+# إعداد سيرفر الويب المصغر عشان ريندر والبورتات
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Discord Shield is online and running!"
+
+def run():
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host='0.0.0.0', port=port)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
 import eventlog
+import fivem
 import security
 import systems
 from setup_tools import TEMPLATES, SetupError, apply_template, format_report
@@ -29,12 +49,19 @@ TOKEN = os.getenv("DISCORD_TOKEN", "").strip()
 if not TOKEN or TOKEN.startswith("ضع_"):
     raise SystemExit("ضع توكن البوت في ملف .env أولاً (DISCORD_TOKEN=...)")
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+DATA_DIR = Path(os.getenv("SHIELD_DATA_DIR", "").strip() or Path(__file__).parent)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+_handlers = [logging.StreamHandler()]
+if not os.getenv("SHIELD_SUPERVISED"):  # عند التشغيل عبر المشغّل الدائم هو اللي يحفظ السجلات
+    (DATA_DIR / "logs").mkdir(exist_ok=True)
+    _handlers.append(RotatingFileHandler(DATA_DIR / "logs" / "shield.log", maxBytes=2_000_000,
+                                         backupCount=5, encoding="utf-8"))
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", handlers=_handlers)
 log = logging.getLogger("shield")
 START_TIME = time.time()
 
 # ───────────────────────── الإعدادات ─────────────────────────
-CONFIG_FILE = Path(__file__).with_name("config.json")
+CONFIG_FILE = DATA_DIR / "config.json"
 
 DEFAULTS = {
     "log_channel_id": None,
@@ -53,19 +80,25 @@ DEFAULTS = {
                 "max_open": 1, "counter": 0,
                 "welcome": "أهلاً {user}! اكتب مشكلتك بالتفصيل وبيرد عليك الفريق قريباً.",
                 "panel": {"channel_id": None, "title": "🎫 الدعم الفني",
-                          "description": "اضغط على الزر لفتح تذكرة وبيرد عليك الفريق."},
-                "types": [{"id": "t1", "label": "دعم فني", "emoji": "🛠️"}]},
-    "applications": {"enabled": False, "review_channel_id": None, "forms": [],
+                          "description": "اضغط على الزر لفتح تذكرة وبيرد عليك الفريق.",
+                          "color": "#5865F2", "image_url": "", "footer": ""},
+                "types": [{"id": "t1", "label": "دعم فني", "emoji": "🛠️", "style": "primary"}]},
+    "applications": {"enabled": False, "review_channel_id": None, "results_channel_id": None,
+                     "counter": 0, "forms": [],
                      "panel": {"channel_id": None, "title": "🧾 التقديمات",
-                               "description": "اختر القسم اللي تبي تقدم عليه واضغط الزر."}},
+                               "description": "اختر القسم اللي تبي تقدم عليه واضغط الزر.",
+                               "color": "#5865F2", "image_url": "", "footer": ""}},
     "verify": {"enabled": False, "role_id": None, "remove_role_id": None,
                "panel": {"channel_id": None, "title": "✅ التحقق",
-                         "description": "اضغط الزر بالأسفل عشان تتحقق وتظهر لك باقي الرومات."}},
+                         "description": "اضغط الزر بالأسفل عشان تتحقق وتظهر لك باقي الرومات.",
+                         "color": "#57F287", "image_url": "", "footer": ""}},
     "antinuke": {"enabled": True, "limit": 4, "per_seconds": 10, "action": "strip",
                  "protect_perms": False, "block_new_bots": False, "whitelist_ids": []},
     "automod": {"mention_enabled": True, "mention_max": 5, "links_enabled": False, "links_allow": [],
                 "emoji_enabled": False, "emoji_max": 10, "dup_enabled": True, "dup_count": 3},
     "lockdown": {"active": False, "prev": {}},
+    "fivem": {"enabled": False, "name": "", "host": "", "port": 30120, "join_code": "", "channel_id": None,
+              "message_id": None, "show_players": True, "banner_url": "", "color": "#22d3ee"},
     "logs": {"enabled": True,
              "channels": {"messages": None, "members": None, "voice": None, "server": None, "mod": None},
              "events": {"message_delete": True, "message_edit": True, "member_join": True, "member_leave": True,
@@ -102,12 +135,42 @@ class Config:
 
 
 config = Config()
-stats = Stats(Path(__file__).with_name("stats.json"))
+stats = Stats(DATA_DIR / "stats.json")
 
 
 @tasks.loop(minutes=1)
 async def flush_stats():
     stats.flush()
+
+
+def _pid_alive(pid: int) -> bool:
+    try:
+        if os.name == "nt":
+            h = ctypes.windll.kernel32.OpenProcess(0x1000, False, pid)
+            if not h:
+                return False
+            code = ctypes.c_ulong()
+            ctypes.windll.kernel32.GetExitCodeProcess(h, ctypes.byref(code))
+            ctypes.windll.kernel32.CloseHandle(h)
+            return code.value == 259
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
+@tasks.loop(seconds=30)
+async def heartbeat():
+    """يكتب نبض الحياة (يراقبه المشغّل الدائم) ويتأكد أن المشغّل نفسه ما زال شغال."""
+    if bot.is_ready():
+        try:
+            (DATA_DIR / "heartbeat").write_text(str(time.time()))
+        except OSError:
+            pass
+    ppid = os.getenv("SHIELD_PARENT_PID", "")
+    if ppid.isdigit() and not _pid_alive(int(ppid)):
+        log.warning("المشغّل الدائم توقف، سيتم إيقاف البوت")
+        os._exit(0)
 
 
 # ───────────────────────── البوت ─────────────────────────
@@ -121,11 +184,14 @@ class ShieldBot(commands.Bot):
 
     async def setup_hook(self):
         self.tree.add_command(shield)
+        self.tree.add_command(ticket_group)
         synced = await self.tree.sync()
         log.info("تمت مزامنة %d أمر سلاش", len(synced))
         flush_stats.start()
+        heartbeat.start()
         systems.init(config, send_log)
         systems.register(self)
+        fivem.start(self, config)
 
         if os.getenv("CLIENT_ID", "").strip() and os.getenv("CLIENT_SECRET", "").strip():
             try:
@@ -665,6 +731,19 @@ async def _kick_new(member: discord.Member, reason: str):
 
 
 # ───────────────────────── أوامر السلاش ─────────────────────────
+ticket_group = app_commands.Group(name="ticket", description="أوامر التذاكر", guild_only=True)
+
+
+@ticket_group.command(name="add", description="إضافة عضو للتذكرة الحالية")
+async def ticket_add(interaction: discord.Interaction, member: discord.Member):
+    await systems.ticket_member(interaction, member, True)
+
+
+@ticket_group.command(name="remove", description="إزالة عضو من التذكرة الحالية")
+async def ticket_remove(interaction: discord.Interaction, member: discord.Member):
+    await systems.ticket_member(interaction, member, False)
+
+
 shield = app_commands.Group(
     name="shield", description="إعدادات Discord Shield", guild_only=True,
     default_permissions=discord.Permissions(manage_guild=True),
@@ -831,6 +910,18 @@ async def clear(interaction: discord.Interaction, amount: app_commands.Range[int
     await interaction.followup.send(f"تم حذف {len(deleted)} رسالة ✅", ephemeral=True)
 
 
+@bot.tree.command(name="serverstatus", description="حالة سيرفر فايف إم")
+@app_commands.guild_only()
+async def serverstatus(interaction: discord.Interaction):
+    fc = config.get(interaction.guild_id)["fivem"]
+    if not fc["host"]:
+        await interaction.response.send_message("ما تم ضبط سيرفر فايف إم من اللوحة (قسم حالة سيرفر فايف إم) ❌", ephemeral=True)
+        return
+    await interaction.response.defer(ephemeral=True, thinking=True)
+    data = await fivem.fetch_status(fc["host"], fc["port"], fresh=True)
+    await interaction.followup.send(embed=fivem.build_embed(fc, data, interaction.guild), ephemeral=True)
+
+
 @bot.tree.command(name="ping", description="فحص عمل البوت")
 async def ping(interaction: discord.Interaction):
     await interaction.response.send_message(f"Pong! 🛡️ {round(bot.latency * 1000)}ms", ephemeral=True)
@@ -849,4 +940,6 @@ async def on_app_error(interaction: discord.Interaction, error: app_commands.App
         await interaction.response.send_message(msg, ephemeral=True)
 
 
-bot.run(TOKEN, log_handler=None)
+if __name__ == "__main__":
+    keep_alive()
+    bot.run(TOKEN, log_handler=None)
